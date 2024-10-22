@@ -80,10 +80,10 @@ module dnh_auction::dnh_auction {
 
     public fun auction_cap<T: key + store>(auction: &Auction<T>): &ID { &auction.auction_cap }
     
-    // Does sender own the package of T through a OTW ??
-    // public fun new_cap<OTW: drop, T: key + store>(otw: OTW, ctx: &mut TxContext): AuctionCap<T> {
-    
-    public fun new_cap<T: key + store>(pub: &Publisher, ctx: &mut TxContext): AuctionCap<T> {
+    public fun new_cap<T: key + store>(
+        pub: &Publisher, 
+        ctx: &mut TxContext
+    ): AuctionCap<T> {
         assert!(is_authorized<T>(pub), ENotOwner);
         AuctionCap<T> {
             id: object::new(ctx)
@@ -91,7 +91,7 @@ module dnh_auction::dnh_auction {
     }
 
     public fun new<T: key + store>(
-        cap: &AuctionCap<T>,
+        auction_cap: &AuctionCap<T>,
         item: T,
         start_bid: u64,
         auction_time_length: u64,
@@ -123,7 +123,7 @@ module dnh_auction::dnh_auction {
             highest_bidder: ctx.sender(),
             is_started: false,
             balance: balance::zero<SUI>(),
-            auction_cap: object::id(cap),
+            auction_cap: object::id(auction_cap),
         });
         id
     }
